@@ -1,0 +1,143 @@
+@font-face {
+  font-family: 'Helvetica Neue Light';
+  src: local('HelveticaNeue-Light'),
+       local('Helvetica Neue Light'),
+       local('HelveticaNeue-Light');
+  font-weight: 300;
+}
+
+body {
+  font-family: 'HelveticaNeue-Light', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: black;
+}
+
+.container {
+  max-width: 600px;
+  width: 100%;
+  padding: 40px;
+  background-color: black;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+  text-align: center;
+  color: white;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+textarea {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  font-size: 16px;
+  background-color: black;
+  color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+  margin-top: 20px;
+}
+
+#image-container img {
+  max-width: 100%;
+  height: auto;
+  margin: 20px 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.download-button {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 24px;
+  background-color: #333;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-family: 'Helvetica Neue Light', sans-serif;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.download-button:hover {
+  background-color: #555;
+}
+
+.controls {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  color: #333;
+}
+
+.slider-group {
+  margin-bottom: 15px;
+}
+
+.slider-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.text-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.slider {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.slider-value {
+  display: inline-block;
+  min-width: 45px;
+  text-align: right;
+  margin-left: 10px;
+}
