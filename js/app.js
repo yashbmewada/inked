@@ -22,6 +22,8 @@ export const hooks = {
 const $ = (id) => document.getElementById(id);
 const els = {
   wrap: $('preview-wrap'),
+  editLetter: $('edit-letter'),
+  titleHit: $('title-hit'),
   canvas: $('preview'),
   placeholder: $('placeholder'),
   shape: $('shape'),
@@ -118,9 +120,11 @@ function ariaLabel({ title, text }) {
 }
 
 // Clearing first makes a repeated message announce again.
+let announceTimer = 0;
 function announce(message) {
   els.live.textContent = '';
-  setTimeout(() => {
+  clearTimeout(announceTimer);
+  announceTimer = setTimeout(() => {
     els.live.textContent = message;
   }, 50);
 }
@@ -167,9 +171,8 @@ function wire() {
     if (b) update((s) => ({ ...s, shape: b.dataset.shape }));
   });
   els.tryStory.addEventListener('click', () => update((s) => ({ ...s, shape: 'story' })));
-  els.wrap.addEventListener('click', (e) => {
-    hooks.openEditor(e.target.closest('#title-hit') ? 'title' : 'text');
-  });
+  els.editLetter.addEventListener('click', () => hooks.openEditor('text'));
+  els.titleHit.addEventListener('click', () => hooks.openEditor('title'));
   els.styleBtn.addEventListener('click', () => hooks.openSheet());
 
   darkQuery.addEventListener('change', () => {

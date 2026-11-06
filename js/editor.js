@@ -57,7 +57,7 @@ export function initEditor({ update, getState, onClose = () => {} }) {
     }
     if (isOpen) return;
     isOpen = true;
-    opener = document.activeElement;
+    opener = document.activeElement === document.body ? $('edit-letter') : document.activeElement;
     sync();
     root.setAttribute('role', 'dialog');
     root.setAttribute('aria-modal', 'true');
@@ -98,7 +98,7 @@ export function initEditor({ update, getState, onClose = () => {} }) {
     if (isOpen && !history.state?.editor) close();
   });
   addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isOpen && !closing) {
+    if (e.key === 'Escape' && !e.isComposing && isOpen && !closing) {
       closing = true;
       history.back();
     }

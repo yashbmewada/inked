@@ -17,11 +17,12 @@
     </header>
 
     <main class="stage">
-      <button id="preview-wrap" class="preview-wrap" type="button">
+      <div id="preview-wrap" class="preview-wrap">
         <canvas id="preview" role="img" aria-label="Blank letter"></canvas>
         <span class="placeholder" id="placeholder">Tap to write.</span>
-        <span id="title-hit" class="title-hit" aria-hidden="true"></span>
-      </button>
+        <button id="edit-letter" class="edit-hit" type="button" aria-label="Edit letter"></button>
+        <button id="title-hit" class="title-hit" type="button" aria-label="Edit title"></button>
+      </div>
       <p id="hint" class="hint" hidden>Text is small. <button id="try-story" class="link" type="button">Try Story</button></p>
     </main>
 

@@ -163,6 +163,21 @@ button:disabled { cursor: default; }
   pointer-events: none;
 }
 
+.edit-hit,
+.title-hit {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.edit-hit {
+  position: absolute;
+  inset: 0;
+}
+
+.edit-hit:focus-visible,
+.title-hit:focus-visible { outline-offset: -4px; }
+
 .title-hit {
   position: absolute;
   inset: 0 0 auto 0;
