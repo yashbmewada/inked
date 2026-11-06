@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inked. visual check</title>
+<link rel="stylesheet" href="../css/fonts.css">
+<style>
+  body { margin: 0; padding: 16px; background: #222; color: #ddd; font: 13px system-ui, sans-serif; }
+  h2 { font-weight: 400; margin: 20px 0 10px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 14px; }
+  figure { margin: 0; }
+  figcaption { margin-top: 4px; }
+  canvas { display: block; width: 216px; height: auto; }
+  #error { color: #f88; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div id="error"></div>
+<h2>Themes</h2>
+<div class="grid" id="themes"></div>
+<h2>Languages, textures and a long letter</h2>
+<div class="grid" id="extras"></div>
+<script type="module">
+import { THEMES, resolveStyle } from '../js/themes.js';
+import { DEFAULT_STATE } from '../js/state.js';
+import { renderImage, loadFonts } from '../js/render.js';
+
+const SCALE = 0.4;
+const LETTER = {
+  title: '',
+  text: 'Dear Sam,\n\nThe kettle still whistles the same off-key note it did the morning you left. I keep meaning to replace it, but every time it sings I think of you laughing at it from the doorway.',
+};
+
+function add(parent, caption, letter, state, shape = 'portrait') {
+  const fig = document.createElement('figure');
+  const canvas = document.createElement('canvas');
+  const style = resolveStyle({ ...DEFAULT_STATE, ...state }, true);
+  const res = renderImage(canvas, letter, style, shape, SCALE);
+  const cap = document.createElement('figcaption');
+  cap.textContent = `${caption} · ${res.size}px ${res.band}${res.empty ? ' (empty)' : ''}`;
+  fig.append(canvas, cap);
+  parent.append(fig);
+}
+
+try {
+  await loadFonts();
+  const grid = document.getElementById('themes');
+  for (const t of THEMES) {
+    const textureOn = t.texture !== 'plain';
+    const variants = t.light ? ['dark', 'light'] : ['dark'];
+    for (const variant of variants) {
+      add(grid, `${t.name} ${t.light ? variant : ''}`, LETTER, { themeId: t.id, variant, textureOn });
+    }
+  }
+
+  const extras = document.getElementById('extras');
+  add(extras, 'Hindi', { title: '', text: 'प्रिय माँ,\n\nआज सुबह की चाय तुम्हारी याद दिला गई। जल्दी मिलेंगे। 🌼' }, { themeId: 'night' });
+  add(extras, 'Arabic', { title: '', text: 'عزيزتي سارة،\n\nما زالت الغلاية تصفّر باللحن نفسه منذ رحلتِ. أفكر فيكِ كل صباح. ☕️' }, { themeId: 'eid', variant: 'dark' });
+  add(extras, 'Japanese', { title: '', text: 'サムへ\n\nやかんは今でもあの朝と同じ音で鳴ります。そのたびにあなたの笑い声を思い出します。🫖✨' }, { themeId: 'winter', variant: 'light' });
+  add(extras, 'Mixed + emoji', { title: '', text: 'Dear Sam,\n\nHappy birthday! 🎂🎉 नमस्ते from all of us. See you in spring 🌸 — love, Ma ❤️ 👨‍👩‍👧 🇮🇳' }, { themeId: 'birthday', variant: 'dark' });
+  const long = Array.from({ length: 120 }, (_, i) => (i % 6 === 5 ? 'The kettle still whistles every morning.\n\n' : 'The kettle still whistles the same note. ')).join('');
+  add(extras, `Night, ${long.slice(0, 4000).length} chars`, { title: '', text: long.slice(0, 4000) }, { themeId: 'night' });
+  add(extras, 'Cream lined + title', { title: 'For Sam', text: LETTER.text }, { themeId: 'cream', textureOn: true, textureChoice: 'lined' });
+  add(extras, 'Rainier story', LETTER, { themeId: 'rainier', variant: 'dark', textureOn: true }, 'story');
+  add(extras, 'New baby square, narrow', LETTER, { themeId: 'newbaby', variant: 'light', margins: 'narrow' }, 'square');
+  add(extras, 'Empty', { title: '', text: '' }, { themeId: 'spring', variant: 'dark' });
+  document.title = 'rendered';
+} catch (e) {
+  document.getElementById('error').textContent = String(e && e.stack || e);
+}
+</script>
+</body>
+</html>
