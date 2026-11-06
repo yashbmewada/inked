@@ -1,7 +1,7 @@
 import { fitText, paragraphDirection, sizeBand, SHAPES, LINE_HEIGHT, PARA_GAP, TITLE_BLOCK } from './layout.js';
-import { FONTS, FALLBACK_STACK } from './themes.js';
+import { FONTS, FALLBACK_STACK, MOTIFS } from './themes.js';
 import { contrastRatio } from './color.js';
-import { MOTIFS, motifRect, STROKE } from './motifs.js';
+import { motifRect, STROKE } from './motifs.js';
 
 // Distance from a line's vertical centre down to its alphabetic baseline, as a fraction of the font size.
 const BASELINE_DROP = 0.32;

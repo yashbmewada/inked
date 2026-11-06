@@ -24,13 +24,26 @@ Push to GitHub, then go to Settings, then Pages, and deploy from the `main` bran
 npm test
 ```
 
-Needs Node 20 or later. There are no dependencies to install.
+Needs Node 22 or later. There are no dependencies to install.
 
 ## Add a theme
 
-Add an entry to `THEMES` in `js/themes.js` with `id`, `name`, `group`, `font` (a key of `FONTS`), `texture`, `motif`, and `dark` and `light` colour sets, each made with `v(ground, ink, tint)`. Set `light` to `null` for a theme with a single look, and `motif` to `null` for no motif.
+```
+npm run new-theme -- sea-glass "Sea glass" seasons
+```
 
-A new motif also needs two entries in `js/motifs.js`, both under the theme's `motif` key: a drawing function in `PAINT` and a position in `PLACEMENT`. `MOTIFS` is built from `PLACEMENT`, so it needs no edit. Update the theme id list in `tests/themes.test.js`.
+This writes `js/themes/sea-glass.js` from a commented template and lists it in `js/themes/index.js`. The group is one of `plain`, `seasons`, `places` or `occasions`. Edit the colours and the motif in the new file, open http://localhost:8000/tests/visual.html to see every theme rendered, then run `npm test`.
+
+Each theme file is one `defineTheme({...})` call:
+
+- `font`: `clean`, `classic`, `classic-italic`, `hand` or `typed`. People can still switch to any font.
+- `texture`: `plain`, `grain`, `lined` or `laid`, used when people turn paper texture on.
+- `dark` and `light`: `{ ground, ink, tint }` as `#RRGGBB`. Ink on ground needs a contrast ratio of at least 7. Plain themes have `light: null`; every other group needs both. The tint colours the motif and the signature dot.
+- `dot` (optional): a fixed `#RRGGBB` for the signature dot instead of the tint.
+- `marginBoost` and `capScale` (optional): extra margin as a fraction of the width, and a multiplier on the largest text size.
+- `motif` (optional): a small drawing in the tint. `zone` is `top-` or `bottom-` followed by `left`, `center` or `right`. `viewBox` is `[width, height]`, `width` is a fraction of the image width (at most 0.4), and `top` or `bottom` plus `side` are offsets as fractions of the width. `draw` lists SVG path strings to stroke, or `{ d, alpha }` for a fainter stroke and `{ d, fill: true }` to fill. A drawing that paths cannot express can add `paint(ctx, { variant, tint })`; see `js/themes/spring.js`.
+
+`defineTheme` rejects a mistake with a message naming the theme and the field, and the tests check that the motif never overlaps the text at any shape or margin. To add a group, add it to `GROUPS` in `js/theme-engine.js`.
 
 ## Fonts
 

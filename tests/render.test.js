@@ -1,9 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mulberry32, safeBox, fontString, dotPlacement } from '../js/render.js';
-import { MOTIFS, motifRect, STROKE } from '../js/motifs.js';
+import { motifRect, STROKE } from '../js/motifs.js';
 import { SHAPES, MARGINS } from '../js/layout.js';
-import { THEMES, FALLBACK_STACK } from '../js/themes.js';
+import { FALLBACK_STACK, MOTIFS } from '../js/themes.js';
 
 test('mulberry32 is deterministic and stays in [0, 1)', () => {
   const a = mulberry32(1);
@@ -49,10 +49,6 @@ test('Rainier is about 30% of the width, bottom right', () => {
   const r = motifRect(MOTIFS.rainier.placement, 1080, 1350);
   assert.equal(MOTIFS.rainier.zone, 'bottom-right');
   assert.ok(Math.abs(r.width / 1080 - 0.3) < 0.01);
-});
-
-test('every theme motif has a drawing', () => {
-  for (const t of THEMES) if (t.motif) assert.ok(MOTIFS[t.motif], t.id);
 });
 
 test('fontString puts italic first and the fallback stack last', () => {

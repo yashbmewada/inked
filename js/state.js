@@ -1,4 +1,4 @@
-import { THEMES } from './themes.js';
+import { THEMES, FONTS } from './themes.js';
 
 export const DEFAULT_STATE = {
   text: '',
@@ -19,7 +19,7 @@ export const STORAGE_KEY = 'inked.v1';
 
 const ENUMS = {
   shape: ['portrait', 'square', 'story'],
-  font: ['theme', 'clean', 'classic', 'hand', 'typed'],
+  font: ['theme', ...Object.keys(FONTS)],
   textSize: ['small', 'medium', 'large'],
   margins: ['narrow', 'normal', 'wide'],
 };

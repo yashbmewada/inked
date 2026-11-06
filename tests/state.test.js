@@ -29,7 +29,7 @@ test('loadState reverts invalid enums and drops unknown keys', () => {
 
 test('loadState validates every field', () => {
   const s = loadState(store(JSON.stringify({
-    themeId: 'nope', variant: 'blue', font: 'classic-italic', margins: 'huge',
+    themeId: 'nope', variant: 'blue', font: 'comic', margins: 'huge',
     textureOn: 'yes', textureChoice: 'dots', caption: 1, text: 5, title: null,
     myThemes: 'x',
   })));
@@ -121,4 +121,8 @@ test('clearLetter clears text and title only', () => {
   assert.equal(c.font, 'typed');
   assert.deepEqual(c.myThemes, s.myThemes);
   assert.equal(s.text, 'a');
+});
+
+test('loadState keeps the Italic font, so the Anniversary font can be picked and saved', () => {
+  assert.equal(loadState(store(JSON.stringify({ font: 'classic-italic' }))).font, 'classic-italic');
 });

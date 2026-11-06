@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { THEMES, FONTS, resolveStyle, getTheme } from '../js/themes.js';
+import { readdirSync } from 'node:fs';
+import { THEMES, FONTS, GROUPS, resolveStyle, getTheme } from '../js/themes.js';
 import { contrastRatio } from '../js/color.js';
 import { DEFAULT_STATE } from '../js/state.js';
 
@@ -25,8 +26,17 @@ test('every non-Plain theme has a light variant', () => {
   }
 });
 
-test('theme ids are in group order', () => {
-  assert.deepEqual(THEMES.map((t) => t.id), ['night', 'cream', 'blush', 'sage', 'inkblue', 'spring', 'monsoon', 'autumn', 'winter', 'rainier', 'birthday', 'anniversary', 'newbaby', 'diwali', 'eid', 'christmas', 'thankyou', 'sympathy']);
+test('themes are grouped in tab order, with the shipped themes first', () => {
+  const groups = Object.keys(GROUPS);
+  const order = THEMES.map((t) => groups.indexOf(t.group));
+  assert.deepEqual(order, [...order].sort((x, y) => x - y));
+  assert.deepEqual(THEMES.slice(0, 5).map((t) => t.id), ['night', 'cream', 'blush', 'sage', 'inkblue']);
+});
+
+test('every file in js/themes/ is listed in index.js, under its own id', () => {
+  const dir = new URL('../js/themes/', import.meta.url);
+  const files = readdirSync(dir).filter((f) => f.endsWith('.js') && f !== 'index.js').map((f) => f.slice(0, -3));
+  assert.deepEqual(THEMES.map((t) => t.id).sort(), files.sort());
 });
 
 test('fonts table', () => {

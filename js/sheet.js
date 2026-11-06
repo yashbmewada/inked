@@ -1,4 +1,4 @@
-import { THEMES, getTheme, resolveStyle } from './themes.js';
+import { THEMES, FONTS, GROUPS, getTheme, resolveStyle } from './themes.js';
 import { setTheme, saveMyTheme, removeMyTheme } from './state.js';
 import { renderImage, fontsReady } from './render.js';
 import { trapFocus } from './focus-trap.js';
@@ -7,18 +7,11 @@ const THUMB_SCALE = 0.12;
 const THUMB_LETTER = { title: '', text: 'Dear Sam,' };
 const SLIDE_MS = 180;
 
-const GROUPS = [
-  ['plain', 'Plain'],
-  ['seasons', 'Seasons'],
-  ['places', 'Places'],
-  ['occasions', 'Occasions'],
-  ['mine', 'Mine'],
-];
-const FONT_CHIPS = [['theme', 'Theme'], ['clean', 'Clean'], ['classic', 'Classic'], ['hand', 'Hand'], ['typed', 'Typed']];
+const TABS = [...Object.entries(GROUPS), ['mine', 'Mine']];
+const FONT_CHIPS = [['theme', 'Theme'], ...Object.entries(FONTS).map(([key, f]) => [key, f.label])];
 const SIZE_CHIPS = [['small', 'Small'], ['medium', 'Medium'], ['large', 'Large']];
 const MARGIN_CHIPS = [['narrow', 'Narrow'], ['normal', 'Normal'], ['wide', 'Wide']];
 const TEXTURE_CHIPS = [['grain', 'Grain'], ['lined', 'Lined'], ['laid', 'Laid']];
-const FONT_NAMES = { clean: 'Clean', classic: 'Classic', 'classic-italic': 'Classic italic', hand: 'Hand', typed: 'Typed' };
 const PAPER_NAMES = { none: 'Plain', grain: 'Grain', lined: 'Lined', laid: 'Laid' };
 
 function el(tag, attrs = {}, children = []) {
@@ -74,7 +67,7 @@ export function initSheet({ update, getState }) {
 
   const strip = el('div', { class: 'strip', role: 'group', 'aria-label': 'Themes' });
   const themeLine = el('p', { class: 'theme-line' });
-  const tabs = chipRow('Theme group', GROUPS, (value) => {
+  const tabs = chipRow('Theme group', TABS, (value) => {
     tab = value;
     refresh();
   });
@@ -179,7 +172,7 @@ export function initSheet({ update, getState }) {
     const mine = state.myThemes.find((t) => t.id === state.themeId);
 
     markRow(tabs, tab);
-    themeLine.textContent = [mine ? mine.name : theme.name, FONT_NAMES[style.fontKey], PAPER_NAMES[style.texture]].join(' · ');
+    themeLine.textContent = [mine ? mine.name : theme.name, FONTS[style.fontKey].label, PAPER_NAMES[style.texture]].join(' · ');
 
     variantRow.hidden = theme.group === 'plain';
     const variant = state.variant ?? (darkQuery.matches ? 'dark' : 'light');
