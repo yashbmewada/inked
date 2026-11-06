@@ -1,0 +1,101 @@
+import { clearLetter } from './state.js';
+
+const CONFIRM_MS = 3000;
+const DANGER = '#ff453a';
+
+export function initEditor({ update, getState, onClose = () => {} }) {
+  const $ = (id) => document.getElementById(id);
+  const root = $('editor');
+  const title = $('title-input');
+  const text = $('text-input');
+  const readout = $('size-readout');
+  const done = $('done');
+  const clear = $('clear');
+  const desktop = matchMedia('(min-width: 900px)');
+  const vv = window.visualViewport;
+
+  let isOpen = false;
+  let band = 'comfortable';
+  let clearTimer = 0;
+
+  title.dir = 'auto';
+  text.dir = 'auto';
+
+  function sync() {
+    const s = getState();
+    if (title.value !== s.title) title.value = s.title;
+    if (text.value !== s.text) text.value = s.text;
+  }
+
+  function showBand(next) {
+    band = next || 'comfortable';
+    readout.textContent = `Text size: ${band}`;
+  }
+
+  function placeBar() {
+    if (!vv) return;
+    const covered = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    root.style.setProperty('--kb', `${covered}px`);
+  }
+
+  function resetClear() {
+    clearTimeout(clearTimer);
+    clearTimer = 0;
+    clear.textContent = 'Clear';
+    clear.style.color = '';
+  }
+
+  function open(focus = 'text') {
+    if (desktop.matches) {
+      sync();
+      (focus === 'title' ? title : text).focus();
+      return;
+    }
+    if (isOpen) return;
+    isOpen = true;
+    sync();
+    root.classList.add('is-open');
+    history.pushState({ editor: true }, '');
+    placeBar();
+    const field = focus === 'title' ? title : text;
+    field.focus();
+    const end = field.value.length;
+    field.setSelectionRange(end, end);
+  }
+
+  function close() {
+    if (!isOpen) return;
+    isOpen = false;
+    root.classList.remove('is-open');
+    resetClear();
+    onClose();
+  }
+
+  title.addEventListener('input', () => update((s) => ({ ...s, title: title.value })));
+  text.addEventListener('input', () => update((s) => ({ ...s, text: text.value })));
+
+  done.addEventListener('click', () => {
+    if (isOpen) history.back();
+  });
+  addEventListener('popstate', close);
+
+  clear.addEventListener('click', () => {
+    if (clearTimer) {
+      resetClear();
+      update(clearLetter);
+      sync();
+      return;
+    }
+    clear.textContent = 'Clear all?';
+    clear.style.color = DANGER;
+    clearTimer = setTimeout(resetClear, CONFIRM_MS);
+  });
+
+  if (vv) {
+    vv.addEventListener('resize', placeBar);
+    vv.addEventListener('scroll', placeBar);
+  }
+
+  sync();
+  return { open, close, setBand: showBand };
+}

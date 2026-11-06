@@ -2,6 +2,7 @@ import { DEFAULT_STATE, loadState, saveState } from './state.js';
 import { resolveStyle } from './themes.js';
 import { renderImage, loadFonts } from './render.js';
 import { SHAPES } from './layout.js';
+import { initEditor } from './editor.js';
 
 const REDRAW_DELAY = 150;
 const LABEL_LIMIT = 300;
@@ -123,6 +124,13 @@ function wire() {
 async function boot() {
   state = loadState(storage());
   wire();
+  const editor = initEditor({ update, getState, onClose: redraw });
+  hooks.openEditor = (focus) => editor.open(focus);
+  const previous = hooks.onStateChange;
+  hooks.onStateChange = (st, result) => {
+    previous(st, result);
+    editor.setBand(result.band);
+  };
   try {
     await loadFonts();
   } catch {

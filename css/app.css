@@ -302,7 +302,7 @@ button:disabled { cursor: default; }
 
 .btn:disabled { opacity: 0.4; }
 
-/* Editor: hidden on phones until a later task opens it full screen. */
+/* Editor: hidden on phones until opened full screen. */
 .editor { display: none; }
 
 .editor.is-open {
@@ -312,7 +312,17 @@ button:disabled { cursor: default; }
   display: flex;
   flex-direction: column;
   gap: var(--s4);
-  padding: var(--s6) var(--gutter) var(--s4);
+  padding: var(--s6) var(--gutter) calc(var(--kb, 0px) + 64px);
+  background: var(--ground);
+}
+
+.editor.is-open .editor-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: var(--kb, 0px);
+  padding: var(--s2) var(--gutter) calc(var(--s2) + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--hairline);
   background: var(--ground);
 }
 
