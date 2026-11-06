@@ -15,6 +15,7 @@ export function initEditor({ update, getState, onClose = () => {} }) {
   const vv = window.visualViewport;
 
   let isOpen = false;
+  let closing = false;
   let band = 'comfortable';
   let clearTimer = 0;
 
@@ -66,6 +67,7 @@ export function initEditor({ update, getState, onClose = () => {} }) {
   function close() {
     if (!isOpen) return;
     isOpen = false;
+    closing = false;
     root.classList.remove('is-open');
     resetClear();
     onClose();
@@ -75,9 +77,13 @@ export function initEditor({ update, getState, onClose = () => {} }) {
   text.addEventListener('input', () => update((s) => ({ ...s, text: text.value })));
 
   done.addEventListener('click', () => {
-    if (isOpen) history.back();
+    if (!isOpen || closing) return;
+    closing = true;
+    history.back();
   });
-  addEventListener('popstate', close);
+  addEventListener('popstate', () => {
+    if (isOpen && !history.state?.editor) close();
+  });
 
   clear.addEventListener('click', () => {
     if (clearTimer) {
