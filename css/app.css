@@ -425,6 +425,8 @@ button:disabled { cursor: default; }
     border: 0;
     background: none;
   }
+
+  .bar .btn-fill { order: -1; }
 }
 
 @media (prefers-reduced-motion: reduce) {

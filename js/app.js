@@ -3,10 +3,13 @@ import { resolveStyle } from './themes.js';
 import { renderImage, loadFonts } from './render.js';
 import { SHAPES } from './layout.js';
 import { initEditor } from './editor.js';
+import { fileName, capabilities, createExporter, share, copy, save } from './export.js';
 
 const REDRAW_DELAY = 150;
 const LABEL_LIMIT = 300;
 const MAX_PIXELS = 16e6;
+const IDLE_DELAY = 600;
+const COPIED_MS = 1500;
 
 // Later tasks (editor, sheet, export) assign these.
 export const hooks = {
@@ -26,6 +29,9 @@ const els = {
   tryStory: $('try-story'),
   save: $('save'),
   share: $('share'),
+  copy: $('copy'),
+  caption: $('caption'),
+  captionInput: $('caption-input'),
   live: $('live'),
 };
 
@@ -44,13 +50,61 @@ let lastBand = null;
 let lastWidth = 0;
 let timer = 0;
 let ready = false;
+let idleTimer = 0;
+let copiedTimer = 0;
+
+const caps = capabilities();
+const desktopQuery = matchMedia('(min-width: 900px)');
+
+function renderBlob() {
+  const { scale } = SHAPES[state.shape];
+  const canvas = document.createElement('canvas');
+  renderImage(canvas, { title: state.title, text: state.text }, resolveStyle(state, darkQuery.matches), state.shape, scale);
+  return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+}
+
+const exporter = createExporter(renderBlob);
+
+function scheduleIdlePrepare() {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    if (state.text.trim() !== '') exporter.prepare();
+  }, IDLE_DELAY);
+}
+
+function syncButtons() {
+  const hasText = state.text.trim() !== '';
+  const preparing = hasText && !exporter.ready();
+  for (const b of [els.save, els.share, els.copy]) b.disabled = !hasText || preparing;
+  els.save.textContent = preparing ? 'Preparing' : 'Save';
+  els.share.textContent = preparing ? 'Preparing' : 'Share';
+  if (preparing) els.copy.textContent = 'Preparing';
+  else if (!copiedTimer) els.copy.textContent = 'Copy image';
+}
+
+// Phone: Save plus Share, or Save plus Copy image, or Save alone.
+// Desktop: Share is primary when files can be shared, otherwise Copy image.
+function layoutBar() {
+  const desktop = desktopQuery.matches;
+  els.share.hidden = !caps.shareFiles;
+  els.copy.hidden = desktop ? !caps.copyImage : caps.shareFiles || !caps.copyImage;
+  els.caption.hidden = !caps.shareFiles;
+  const copyPrimary = desktop && !caps.shareFiles;
+  els.copy.classList.toggle('btn-fill', copyPrimary);
+  els.copy.classList.toggle('btn-outline', !copyPrimary);
+}
 
 export function getState() {
   return state;
 }
 
 export function update(fn) {
+  const prev = state;
   state = fn(state);
+  if (Object.keys(state).some((k) => k !== 'caption' && prev[k] !== state[k])) {
+    exporter.invalidate();
+    scheduleIdlePrepare();
+  }
   saveState(state, storage());
   clearTimeout(timer);
   timer = setTimeout(redraw, REDRAW_DELAY);
@@ -81,9 +135,7 @@ export function redraw() {
   els.placeholder.hidden = !result.empty;
   els.canvas.setAttribute('aria-label', ariaLabel(state));
 
-  const hasText = state.text.trim() !== '';
-  els.save.disabled = !hasText;
-  els.share.disabled = !hasText;
+  syncButtons();
 
   const showHint = !result.empty && result.band !== 'comfortable' && state.shape !== 'story';
   const hintAppeared = showHint && els.hint.hidden;
@@ -112,7 +164,40 @@ function wire() {
   els.styleBtn.addEventListener('click', () => hooks.openSheet());
 
   darkQuery.addEventListener('change', () => {
-    if (state.variant === null) redraw();
+    if (state.variant === null) {
+      exporter.invalidate();
+      scheduleIdlePrepare();
+      redraw();
+    }
+  });
+  desktopQuery.addEventListener('change', layoutBar);
+  exporter.onChange(syncButtons);
+
+  els.save.addEventListener('click', () => {
+    const blob = exporter.ready();
+    if (blob) save(blob, fileName(new Date()));
+  });
+  els.share.addEventListener('click', () => {
+    const blob = exporter.ready();
+    if (!blob) return;
+    share(blob, { caption: state.caption && state.text.trim() ? state.text : null }).catch(() => {});
+  });
+  els.copy.addEventListener('click', () => {
+    const blob = exporter.ready();
+    if (!blob) return;
+    copy(blob)
+      .then(() => {
+        els.copy.textContent = 'Copied';
+        clearTimeout(copiedTimer);
+        copiedTimer = setTimeout(() => {
+          copiedTimer = 0;
+          syncButtons();
+        }, COPIED_MS);
+      })
+      .catch(() => {});
+  });
+  els.captionInput.addEventListener('change', () => {
+    update((s) => ({ ...s, caption: els.captionInput.checked }));
   });
 
   // Redraw at the new pixel size when the preview's box changes (shape, rotation, window size).
@@ -124,7 +209,16 @@ function wire() {
 async function boot() {
   state = loadState(storage());
   wire();
-  const editor = initEditor({ update, getState, onClose: redraw });
+  layoutBar();
+  els.captionInput.checked = state.caption;
+  const editor = initEditor({
+    update,
+    getState,
+    onClose: () => {
+      redraw();
+      exporter.prepare();
+    },
+  });
   hooks.openEditor = (focus) => editor.open(focus);
   const previous = hooks.onStateChange;
   hooks.onStateChange = (st, result) => {
@@ -138,6 +232,7 @@ async function boot() {
   }
   ready = true;
   redraw();
+  scheduleIdlePrepare();
 }
 
 boot();
