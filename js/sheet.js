@@ -1,6 +1,6 @@
 import { THEMES, getTheme, resolveStyle } from './themes.js';
 import { setTheme, saveMyTheme, removeMyTheme } from './state.js';
-import { renderImage } from './render.js';
+import { renderImage, fontsReady } from './render.js';
 import { trapFocus } from './focus-trap.js';
 
 const THUMB_SCALE = 0.12;
@@ -135,7 +135,7 @@ export function initSheet({ update, getState }) {
     canvas = el('canvas', { 'aria-hidden': 'true' });
     renderImage(canvas, THUMB_LETTER, style, 'portrait', THUMB_SCALE);
     // Thumbnails drawn before the fonts arrive are redrawn next time.
-    if (document.fonts.status === 'loaded') thumbs.set(key, canvas);
+    if (fontsReady()) thumbs.set(key, canvas);
     return canvas;
   }
 
@@ -148,7 +148,7 @@ export function initSheet({ update, getState }) {
       const key = [entry.id, style.ground, style.fontKey, style.texture].join('|');
       return { entry, style, key };
     });
-    const nextKey = document.fonts.status + '#' + tab + '#' + state.themeId + '#' + items.map((i) => i.key).join(',');
+    const nextKey = String(fontsReady()) + '#' + tab + '#' + state.themeId + '#' + items.map((i) => i.key).join(',');
     if (nextKey === stripKey) return;
     stripKey = nextKey;
 

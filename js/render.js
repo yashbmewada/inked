@@ -19,12 +19,22 @@ const FONT_LOADS = [
   ['Courier Prime', 'normal', 400],
 ];
 
+let fontsSettled = false;
+
+export function fontsReady() {
+  return fontsSettled;
+}
+
 export async function loadFonts() {
-  await Promise.all(
-    FONT_LOADS.map(([family, style, weight]) =>
-      document.fonts.load(`${style === 'italic' ? 'italic ' : ''}${weight} 16px "${family}"`),
-    ),
-  );
+  try {
+    await Promise.all(
+      FONT_LOADS.map(([family, style, weight]) =>
+        document.fonts.load(`${style === 'italic' ? 'italic ' : ''}${weight} 16px "${family}"`),
+      ),
+    );
+  } finally {
+    fontsSettled = true;
+  }
 }
 
 export function fontString(style, size, weight) {

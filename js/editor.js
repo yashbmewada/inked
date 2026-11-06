@@ -17,6 +17,8 @@ export function initEditor({ update, getState, onClose = () => {} }) {
 
   let isOpen = false;
   let closing = false;
+  // Each open gets its own history entry id, so a stale entry left by a reload cannot keep the editor open.
+  let entryId = 0;
   let band = 'comfortable';
   let clearTimer = 0;
   let releaseTrap = null;
@@ -63,7 +65,8 @@ export function initEditor({ update, getState, onClose = () => {} }) {
     root.setAttribute('aria-modal', 'true');
     root.classList.add('is-open');
     releaseTrap = trapFocus(root);
-    history.pushState({ editor: true }, '');
+    entryId += 1;
+    history.pushState({ editor: entryId }, '');
     placeBar();
     const field = focus === 'title' ? title : text;
     field.focus();
@@ -89,19 +92,22 @@ export function initEditor({ update, getState, onClose = () => {} }) {
   title.addEventListener('input', () => update((s) => ({ ...s, title: title.value })));
   text.addEventListener('input', () => update((s) => ({ ...s, text: text.value })));
 
-  done.addEventListener('click', () => {
+  done.addEventListener('click', requestClose);
+  function requestClose() {
     if (!isOpen || closing) return;
     closing = true;
     history.back();
-  });
+  }
   addEventListener('popstate', () => {
-    if (isOpen && !history.state?.editor) close();
+    if (!isOpen) return;
+    if (history.state?.editor !== entryId) close();
+    else closing = false;
+  });
+  desktop.addEventListener('change', () => {
+    if (desktop.matches) requestClose();
   });
   addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !e.isComposing && isOpen && !closing) {
-      closing = true;
-      history.back();
-    }
+    if (e.key === 'Escape' && !e.isComposing) requestClose();
   });
 
   clear.addEventListener('click', () => {

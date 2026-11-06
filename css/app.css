@@ -339,6 +339,7 @@ button:disabled { cursor: default; }
 /* Editor: hidden on phones until opened full screen. */
 .editor { display: none; }
 
+@media (max-width: 899.98px) {
 .editor.is-open {
   position: fixed;
   inset: 0;
@@ -358,6 +359,7 @@ button:disabled { cursor: default; }
   padding: var(--s2) var(--gutter) calc(var(--s2) + env(safe-area-inset-bottom));
   border-top: 1px solid var(--hairline);
   background: var(--ground);
+}
 }
 
 .editor-top {

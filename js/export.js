@@ -14,10 +14,13 @@ export function capabilities(nav = navigator) {
   return { shareFiles, copyImage: !!(nav.clipboard?.write && globalThis.ClipboardItem) };
 }
 
-export function createExporter(render) {
+export function createExporter(render, { retryMs = 1000 } = {}) {
   let version = 0;
   let blob = null;
   let pending = null;
+  let retryTimer = 0;
+  let retried = false;
+  let failed = false;
   const listeners = [];
   const emit = () => listeners.forEach((cb) => cb(blob !== null));
 
@@ -25,6 +28,10 @@ export function createExporter(render) {
     version++;
     blob = null;
     pending = null;
+    retried = false;
+    failed = false;
+    clearTimeout(retryTimer);
+    retryTimer = 0;
     emit();
   }
 
@@ -43,7 +50,19 @@ export function createExporter(render) {
       pending = null;
       if (result) {
         blob = result;
+        failed = false;
         emit();
+        return;
+      }
+      failed = true;
+      // A failed render leaves the UI unblocked; one retry, then wait for the next change.
+      emit();
+      if (!retried) {
+        retried = true;
+        retryTimer = setTimeout(() => {
+          retryTimer = 0;
+          if (mine === version) prepare();
+        }, retryMs);
       }
     })();
     pending = run;
@@ -54,6 +73,7 @@ export function createExporter(render) {
     invalidate,
     prepare,
     ready: () => blob,
+    failed: () => failed,
     onChange: (cb) => listeners.push(cb),
   };
 }

@@ -51,3 +51,31 @@ test('prepare does nothing when a blob is already ready', async () => {
   await exporter.prepare();
   assert.equal(calls, 1);
 });
+
+test('a null render leaves Preparing, retries once, then delivers the blob', async () => {
+  let calls = 0;
+  const exporter = createExporter(async () => (++calls === 1 ? null : 'blob'), { retryMs: 5 });
+  const seen = [];
+  exporter.onChange((r) => seen.push(r));
+  exporter.invalidate();
+  await exporter.prepare();
+  assert.equal(exporter.ready(), null);
+  assert.equal(exporter.failed(), true);
+  assert.deepEqual(seen, [false, false]);
+  await new Promise((r) => setTimeout(r, 30));
+  assert.equal(exporter.ready(), 'blob');
+  assert.equal(exporter.failed(), false);
+  assert.deepEqual(seen, [false, false, true]);
+  assert.equal(calls, 2);
+});
+
+test('after the one retry fails, no further retries until a change', async () => {
+  let calls = 0;
+  const exporter = createExporter(async () => (++calls, null), { retryMs: 5 });
+  await exporter.prepare();
+  await new Promise((r) => setTimeout(r, 40));
+  assert.equal(calls, 2);
+  exporter.invalidate();
+  await exporter.prepare();
+  assert.equal(calls, 3);
+});

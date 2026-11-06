@@ -1,6 +1,6 @@
 import { DEFAULT_STATE, loadState, saveState } from './state.js';
 import { resolveStyle } from './themes.js';
-import { renderImage, loadFonts } from './render.js';
+import { renderImage, loadFonts, fontsReady } from './render.js';
 import { SHAPES } from './layout.js';
 import { initEditor } from './editor.js';
 import { initSheet } from './sheet.js';
@@ -62,8 +62,19 @@ const desktopQuery = matchMedia('(min-width: 900px)');
 function renderBlob() {
   const { scale } = SHAPES[state.shape];
   const canvas = document.createElement('canvas');
-  renderImage(canvas, { title: state.title, text: state.text }, resolveStyle(state, darkQuery.matches), state.shape, scale);
-  return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+  try {
+    renderImage(canvas, { title: state.title, text: state.text }, resolveStyle(state, darkQuery.matches), state.shape, scale);
+  } catch (e) {
+    canvas.width = canvas.height = 0;
+    throw e;
+  }
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      // iOS Safari caps total canvas memory, so release the 13-16 MP surface at once.
+      canvas.width = canvas.height = 0;
+      resolve(blob);
+    }, 'image/png');
+  });
 }
 
 const exporter = createExporter(renderBlob);
@@ -71,13 +82,13 @@ const exporter = createExporter(renderBlob);
 function scheduleIdlePrepare() {
   clearTimeout(idleTimer);
   idleTimer = setTimeout(() => {
-    if (state.text.trim() !== '') exporter.prepare();
+    if (fontsReady() && state.text.trim() !== '') exporter.prepare();
   }, IDLE_DELAY);
 }
 
 function syncButtons() {
   const hasText = state.text.trim() !== '';
-  const preparing = hasText && !exporter.ready();
+  const preparing = hasText && !exporter.ready() && !exporter.failed();
   for (const b of [els.save, els.share, els.copy]) b.disabled = !hasText || preparing;
   els.save.textContent = preparing ? 'Preparing' : 'Save';
   els.share.textContent = preparing ? 'Preparing' : 'Share';
@@ -188,15 +199,22 @@ function wire() {
   els.save.addEventListener('click', () => {
     const blob = exporter.ready();
     if (blob) save(blob, fileName(new Date()));
+    else exporter.prepare();
   });
   els.share.addEventListener('click', () => {
     const blob = exporter.ready();
-    if (!blob) return;
+    if (!blob) {
+      exporter.prepare();
+      return;
+    }
     share(blob, { caption: state.caption && state.text.trim() ? state.text : null }).catch(() => {});
   });
   els.copy.addEventListener('click', () => {
     const blob = exporter.ready();
-    if (!blob) return;
+    if (!blob) {
+      exporter.prepare();
+      return;
+    }
     copy(blob)
       .then(() => {
         els.copy.textContent = 'Copied';
@@ -219,6 +237,8 @@ function wire() {
 }
 
 async function boot() {
+  // A reload or tab restore keeps the old history state; drop it so no stale entry reopens an overlay.
+  if (history.state) history.replaceState(null, '');
   state = loadState(storage());
   wire();
   layoutBar();
@@ -228,7 +248,7 @@ async function boot() {
     getState,
     onClose: () => {
       redraw();
-      exporter.prepare();
+      if (fontsReady()) exporter.prepare();
     },
   });
   hooks.openEditor = (focus) => editor.open(focus);
@@ -256,6 +276,8 @@ async function boot() {
   } catch {
     // fall back to system fonts
   }
+  // Anything prepared before the fonts arrived used fallback fonts.
+  exporter.invalidate();
   ready = true;
   redraw();
   scheduleIdlePrepare();
