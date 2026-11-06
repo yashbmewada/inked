@@ -16,9 +16,11 @@
 
   --r-control: 12px;
   --r-preview: 8px;
+  --r-sheet: 22px;
 
   --bar-h: 48px;
   --ease: 180ms ease-out;
+  --glass-base: rgba(23,23,22,.72);
   /* Preview aspect ratio (width / height), set by js/app.js from the shape. */
   --ar: 0.8;
 
@@ -33,6 +35,7 @@
     --muted: #7D7466;
     --hairline: #D9D1C2;
     --tonal: #E8E1D3;
+    --glass-base: rgba(243,238,227,.72);
     color-scheme: light;
   }
 }
@@ -371,6 +374,261 @@ button:disabled { cursor: default; }
   justify-content: space-between;
 }
 
+/* Style sheet: the only glass in the app. */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 14;
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.sheet:focus { outline: none; }
+
+@media (max-width: 899.98px) {
+  .sheet {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 15;
+    max-height: 85dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: var(--s4) var(--gutter) calc(var(--s4) + env(safe-area-inset-bottom));
+    border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+    background: var(--glass-base) linear-gradient(180deg, rgba(237,234,227,.06), transparent 45%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(237,234,227,.10);
+    border-bottom: 0;
+    box-shadow: inset 0 1px 0 rgba(237,234,227,.16), inset 0 -1px 0 rgba(0,0,0,.35);
+    opacity: 0;
+    transform: translateY(100%);
+    transition: transform var(--ease), opacity var(--ease);
+  }
+
+  .sheet.is-open {
+    opacity: 1;
+    transform: none;
+  }
+
+  .sheet-open .masthead,
+  .sheet-open .stage,
+  .sheet-open .controls,
+  .sheet-open .caption { filter: brightness(.55); }
+
+  .sheet-open .bar { display: none; }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .sheet { background: var(--raised); }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .sheet {
+      background: var(--raised);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    .sheet {
+      background: var(--ground);
+      border: 1px solid var(--ink);
+      box-shadow: none;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .sheet {
+      background: Canvas;
+      color: CanvasText;
+      border: 1px solid CanvasText;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+}
+
+.strip {
+  display: flex;
+  gap: var(--s2);
+  min-height: 78px;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 4px var(--gutter);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.strip::-webkit-scrollbar,
+.chips.tabs::-webkit-scrollbar { display: none; }
+
+.thumb-wrap {
+  position: relative;
+  flex: none;
+}
+
+.thumb {
+  flex: none;
+  display: block;
+  width: 56px;
+  aspect-ratio: 4 / 5;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-preview);
+  overflow: hidden;
+  background: var(--raised);
+}
+
+.thumb canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.thumb[aria-pressed="true"] {
+  outline: 1.5px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.thumb:focus-visible { outline: 2px solid var(--seal); }
+
+.thumb-remove {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  background: var(--ground);
+  color: var(--ink);
+}
+
+/* Extends the 20px remove control to a 36px tap target. */
+.thumb-remove::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+.theme-line {
+  margin: -4px 0 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+
+.chips.tabs {
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 4px var(--gutter);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.chip {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-control);
+  background: none;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+  transition: background-color var(--ease), color var(--ease);
+}
+
+.chip::after {
+  content: "";
+  position: absolute;
+  inset: -4px 0;
+}
+
+.chip[aria-pressed="true"] {
+  background: var(--tonal);
+  color: var(--ink);
+}
+
+.chip[aria-pressed="true"]::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--seal);
+}
+
+.segmented.variant { flex: none; }
+
+.switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  text-align: start;
+}
+
+.switch .track {
+  position: relative;
+  width: 40px;
+  height: 24px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-control);
+  transition: background-color var(--ease);
+}
+
+.switch .track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: transform var(--ease), background-color var(--ease);
+}
+
+.switch[aria-checked="true"] .track { background: var(--tonal); }
+
+.switch[aria-checked="true"] .track::after {
+  background: var(--ink);
+  transform: translateX(16px);
+}
+
+.save-theme {
+  align-self: flex-start;
+  font-size: 13px;
+}
+
 /* Desktop: two columns */
 @media (min-width: 900px) {
   .app {
@@ -427,6 +685,14 @@ button:disabled { cursor: default; }
   }
 
   .bar .btn-fill { order: -1; }
+
+  #style-btn { display: none; }
+
+  .strip,
+  .chips.tabs {
+    margin: 0;
+    padding: 4px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -448,7 +714,10 @@ button:disabled { cursor: default; }
 
 @media (forced-colors: active) {
   .dot { forced-color-adjust: none; }
-  .segmented button[aria-pressed="true"] { outline: 2px solid Highlight; }
+  .segmented button[aria-pressed="true"],
+  .chip[aria-pressed="true"],
+  .thumb[aria-pressed="true"] { outline: 2px solid Highlight; }
+  .chip[aria-pressed="true"]::before { forced-color-adjust: none; }
   .btn-fill { border-color: ButtonText; }
   .btn:disabled { border-color: GrayText; color: GrayText; opacity: 1; }
   .placeholder { color: GrayText; }

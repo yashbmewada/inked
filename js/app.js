@@ -3,6 +3,7 @@ import { resolveStyle } from './themes.js';
 import { renderImage, loadFonts } from './render.js';
 import { SHAPES } from './layout.js';
 import { initEditor } from './editor.js';
+import { initSheet } from './sheet.js';
 import { fileName, capabilities, createExporter, share, copy, save } from './export.js';
 
 const REDRAW_DELAY = 150;
@@ -224,6 +225,20 @@ async function boot() {
   hooks.onStateChange = (st, result) => {
     previous(st, result);
     editor.setBand(result.band);
+  };
+  // Style changes redraw at once rather than after the typing debounce.
+  const sheet = initSheet({
+    update: (fn) => {
+      update(fn);
+      redraw();
+    },
+    getState,
+  });
+  hooks.openSheet = () => sheet.open();
+  const beforeSheet = hooks.onStateChange;
+  hooks.onStateChange = (st, result) => {
+    beforeSheet(st, result);
+    sheet.refresh();
   };
   try {
     await loadFonts();
