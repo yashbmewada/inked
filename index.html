@@ -1,45 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Customizable Image Generator</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0E0E0D">
+  <title>Inked.</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230E0E0D'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23D0533A'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/app.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>Customizable Image Generator</h1>
-    <form id="image-form">
-      <label for="text-input">Enter the text you want to display:</label>
-      <textarea id="text-input" rows="3" placeholder="Enter your text here"></textarea>
-      <button type="submit">Generate Image</button>
-    </form>
-    <div id="image-container"></div>
-    <div class="controls">
-      <div class="input-group">
-        <label for="title-input">Title</label>
-        <input type="text" id="title-input" placeholder="Enter title (optional)" class="text-input">
+  <div class="app">
+    <header class="masthead">
+      <h1 class="wordmark">Inked<span class="dot" aria-hidden="true"></span></h1>
+    </header>
+
+    <main class="stage">
+      <button id="preview-wrap" class="preview-wrap" type="button">
+        <canvas id="preview" role="img" aria-label="Blank letter"></canvas>
+        <span class="placeholder" id="placeholder">Tap to write.</span>
+        <span id="title-hit" class="title-hit" aria-hidden="true"></span>
+      </button>
+      <p id="hint" class="hint" hidden>Text is small. <button id="try-story" class="link" type="button">Try Story</button></p>
+    </main>
+
+    <div class="panel">
+      <section id="editor" class="editor" aria-label="Letter">
+        <div class="editor-top">
+          <p class="wordmark editor-mark">Inked<span class="dot" aria-hidden="true"></span></p>
+          <button id="clear" class="link clear" type="button">Clear</button>
+        </div>
+        <input id="title-input" class="title-input" type="text" placeholder="Title (optional)" aria-label="Title (optional)" autocomplete="off">
+        <textarea id="text-input" class="text-input" placeholder="Write or paste your letter.&#10;Your words stay on this device." aria-label="Letter"></textarea>
+        <div class="editor-bar">
+          <span id="size-readout" class="label">Text size: comfortable</span>
+          <button id="done" class="link done" type="button">Done</button>
+        </div>
+      </section>
+
+      <div class="controls">
+        <div id="shape" class="segmented" role="group" aria-label="Shape">
+          <button type="button" data-shape="portrait" aria-pressed="true">Portrait</button>
+          <button type="button" data-shape="story" aria-pressed="false">Story</button>
+          <button type="button" data-shape="square" aria-pressed="false">Square</button>
+        </div>
+        <button id="style-btn" class="icon-btn" type="button" aria-label="Style">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="5" x2="15" y2="5"/><line x1="3" y1="13" x2="15" y2="13"/><circle cx="7" cy="5" r="2" class="knob"/><circle cx="12" cy="13" r="2" class="knob"/></svg>
+        </button>
       </div>
 
-      <div class="slider-group">
-        <label for="fontSize">Font Size (24-60px)</label>
-        <input type="range" id="fontSize" min="24" max="60" value="42" class="slider">
-        <span class="slider-value" id="fontSizeValue">42px</span>
-      </div>
-      
-      <div class="slider-group">
-        <label for="margin">Margins (10-30%)</label>
-        <input type="range" id="margin" min="10" max="30" value="20" class="slider">
-        <span class="slider-value" id="marginValue">20%</span>
-      </div>
-      
-      <div class="slider-group">
-        <label for="contentWidth">Content Width (50-80%)</label>
-        <input type="range" id="contentWidth" min="50" max="80" value="70" class="slider">
-        <span class="slider-value" id="contentWidthValue">70%</span>
+      <section id="sheet" class="sheet" aria-label="Style" hidden></section>
+
+      <label id="caption" class="caption" hidden>
+        <input id="caption-input" type="checkbox">
+        <span>Also send the words as text</span>
+      </label>
+
+      <div id="bar" class="bar">
+        <button id="copy" class="btn btn-outline" type="button" disabled hidden>Copy image</button>
+        <button id="save" class="btn btn-outline" type="button" disabled>Save</button>
+        <button id="share" class="btn btn-fill" type="button" disabled>Share</button>
       </div>
     </div>
+
+    <div id="live" class="sr-only" aria-live="polite"></div>
   </div>
-  <script src="script.js"></script>
 </body>
 </html>
