@@ -5,6 +5,7 @@ import { SHAPES } from './layout.js';
 
 const REDRAW_DELAY = 150;
 const LABEL_LIMIT = 300;
+const MAX_PIXELS = 16e6;
 
 // Later tasks (editor, sheet, export) assign these.
 export const hooks = {
@@ -70,7 +71,7 @@ export function redraw() {
 
   lastWidth = els.wrap.clientWidth;
   const cssWidth = lastWidth || w;
-  const scale = (cssWidth * (window.devicePixelRatio || 1)) / w;
+  const scale = Math.min((cssWidth * (window.devicePixelRatio || 1)) / w, Math.sqrt(MAX_PIXELS / (w * h)));
   const result = renderImage(els.canvas, { title: state.title, text: state.text }, style, state.shape, scale);
 
   for (const b of els.shape.querySelectorAll('[data-shape]')) {
@@ -121,13 +122,13 @@ function wire() {
 
 async function boot() {
   state = loadState(storage());
+  wire();
   try {
     await loadFonts();
   } catch {
     // fall back to system fonts
   }
   ready = true;
-  wire();
   redraw();
 }
 
