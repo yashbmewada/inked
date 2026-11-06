@@ -1,7 +1,7 @@
 import { fitText, paragraphDirection, sizeBand, SHAPES, LINE_HEIGHT, PARA_GAP, TITLE_BLOCK } from './layout.js';
 import { FONTS, FALLBACK_STACK } from './themes.js';
 import { contrastRatio } from './color.js';
-import { MOTIFS } from './motifs.js';
+import { MOTIFS, motifRect, STROKE } from './motifs.js';
 
 // Distance from a line's vertical centre down to its alphabetic baseline, as a fraction of the font size.
 const BASELINE_DROP = 0.32;
@@ -52,6 +52,21 @@ export function safeBox(w, h, marginFrac, motif) {
     box.height -= band;
   }
   return box;
+}
+
+// The signature dot: in the bottom margin at the first block's start edge. If that spot
+// touches a bottom motif, it moves up into the gap between the text area and the motif.
+export function dotPlacement(w, h, box, margin, size, rtl, motif) {
+  const r = Math.min(22, Math.max(12, 0.3 * size)) / 2;
+  const x = rtl ? box.x + box.width - r : box.x + r;
+  let y = h - margin / 2;
+  if (motif && motif.zone.startsWith('bottom')) {
+    const m = motifRect(motif.placement, w, h);
+    const pad = STROKE / 2;
+    const hits = x + r > m.x - pad && x - r < m.x + m.width + pad && y + r > m.y - pad;
+    if (hits) y = (box.y + box.height + m.y - pad) / 2;
+  }
+  return { x, y, r };
 }
 
 const variantOf = (ground) =>
@@ -184,11 +199,11 @@ export function renderImage(canvas, letter, style, shape, scale) {
     ctx.fillText(b.line, rtl ? box.x + box.width : box.x, b.y);
   }
 
-  const r = (0.18 * size * 0.7) / 2;
   const startRtl = layout.blocks.length > 0 && layout.blocks[0].dir === 'rtl';
+  const dot = dotPlacement(w, h, box, margin, size, startRtl, motif);
   ctx.fillStyle = style.dot;
   ctx.beginPath();
-  ctx.arc(startRtl ? box.x + box.width - r : box.x + r, h - margin / 2, r, 0, 2 * Math.PI);
+  ctx.arc(dot.x, dot.y, dot.r, 0, 2 * Math.PI);
   ctx.fill();
 
   return { size, band: sizeBand(size), empty: false };

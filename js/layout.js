@@ -17,6 +17,19 @@ export function paragraphDirection(p) {
   return 'ltr';
 }
 
+const PUNCT = /^\p{P}/u;
+
+// Word segments, with each punctuation or symbol run attached to the segment before it.
+function tokens(p, words) {
+  const out = [];
+  for (const { segment, isWordLike } of words.segment(p)) {
+    const prev = out[out.length - 1];
+    if (!isWordLike && segment.trim() && prev !== undefined && prev.trim()) out[out.length - 1] += segment;
+    else out.push(segment);
+  }
+  return out;
+}
+
 export function wrapParagraph(p, maxWidth, measure) {
   const words = new Intl.Segmenter(undefined, { granularity: 'word' });
   const graphemes = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
@@ -29,7 +42,7 @@ export function wrapParagraph(p, maxWidth, measure) {
     line = '';
   };
 
-  for (const { segment: seg } of words.segment(p)) {
+  for (const seg of tokens(p, words)) {
     const blank = !seg.trim();
     if (measure(line + seg) <= maxWidth) {
       if (!(blank && !line)) line += seg;
@@ -42,7 +55,15 @@ export function wrapParagraph(p, maxWidth, measure) {
       continue;
     }
     for (const { segment: g } of graphemes.segment(seg)) {
-      if (line && measure(line + g) > maxWidth) flush();
+      if (line && measure(line + g) > maxWidth) {
+        // Carry the last grapheme down so punctuation never starts a line.
+        const parts = PUNCT.test(g) ? [...graphemes.segment(line)].map((x) => x.segment) : [];
+        if (parts.length > 1) {
+          line = parts.slice(0, -1).join('');
+          flush();
+          line = parts[parts.length - 1];
+        } else flush();
+      }
       line += g;
     }
   }

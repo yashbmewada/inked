@@ -2,7 +2,7 @@
 // Each motif is drawn in its own viewBox space and scaled onto the canvas.
 // Placement offsets and widths are fractions of the canvas width.
 
-export const STROKE = 1.5;
+export const STROKE = 4;
 const MIN_MARGIN = 0.07;
 const GAP = 0.03;
 
@@ -143,7 +143,7 @@ export function motifRect(p, w, h) {
 
 function makeMotif(key) {
   const p = PLACEMENT[key];
-  const extent = (p.zone.startsWith('top') ? p.top : p.bottom) + p.width * (p.vb[1] / p.vb[0]);
+  const extent = (p.zone.startsWith('top') ? p.top : p.bottom) + p.width * (p.vb[1] / p.vb[0]) + STROKE / 2 / 1080;
   return {
     zone: p.zone,
     // Measured from the margin inset, so the narrowest margin still clears the motif.

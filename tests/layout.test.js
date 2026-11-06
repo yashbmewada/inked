@@ -53,3 +53,22 @@ test('wrapParagraph keeps Devanagari clusters intact', () => {
   assert.equal(lines.join('').replace(/ /g, ''), s.replace(/ /g, ''));
   noEdgeSpaces(lines);
 });
+
+test('wrapParagraph never starts a line with trailing punctuation', () => {
+  const m = fakeMeasure(10);
+  for (let width = 20; width <= 120; width += 5) {
+    for (const line of wrapParagraph('left. I keep', width, m)) {
+      assert.ok(!line.startsWith('.'), `width ${width}: "${line}"`);
+    }
+  }
+});
+
+test('wrapParagraph keeps the Japanese full stop with the text before it', () => {
+  const m = fakeMeasure(10);
+  const s = 'やかんは今でもあの朝と同じ音で鳴ります。そのたびに思い出します。';
+  for (let width = 20; width <= 160; width += 5) {
+    for (const line of wrapParagraph(s, width, m)) {
+      assert.ok(!line.startsWith('。'), `width ${width}: "${line}"`);
+    }
+  }
+});

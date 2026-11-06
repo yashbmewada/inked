@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mulberry32, safeBox, fontString } from '../js/render.js';
-import { MOTIFS, motifRect } from '../js/motifs.js';
+import { mulberry32, safeBox, fontString, dotPlacement } from '../js/render.js';
+import { MOTIFS, motifRect, STROKE } from '../js/motifs.js';
 import { SHAPES, MARGINS } from '../js/layout.js';
 import { THEMES, FALLBACK_STACK } from '../js/themes.js';
 
@@ -61,4 +61,43 @@ test('fontString puts italic first and the fallback stack last', () => {
     `italic 400 64px "EB Garamond", ${FALLBACK_STACK}`,
   );
   assert.equal(fontString({ italic: false, family: 'Kalam' }, 30, 300), `300 30px "Kalam", ${FALLBACK_STACK}`);
+});
+
+test('signature dot diameter is 0.3 x size, clamped to 12..22', () => {
+  const box = safeBox(1080, 1350, 0.11, null);
+  assert.equal(dotPlacement(1080, 1350, box, 118.8, 10, false, null).r, 6);
+  assert.equal(dotPlacement(1080, 1350, box, 118.8, 50, false, null).r, 7.5);
+  assert.equal(dotPlacement(1080, 1350, box, 118.8, 88, false, null).r, 11);
+});
+
+test('signature dot sits in the bottom margin at the start edge', () => {
+  const box = safeBox(1080, 1350, 0.11, null);
+  const ltr = dotPlacement(1080, 1350, box, 118.8, 64, false, null);
+  const rtl = dotPlacement(1080, 1350, box, 118.8, 64, true, null);
+  const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-9, `${a} vs ${b}`);
+  near(ltr.x - ltr.r, box.x);
+  near(rtl.x + rtl.r, box.x + box.width);
+  near(ltr.y, 1350 - 118.8 / 2);
+});
+
+test('signature dot never touches a bottom motif, in either direction', () => {
+  for (const [key, motif] of Object.entries(MOTIFS)) {
+    if (!motif.zone.startsWith('bottom')) continue;
+    for (const { w, h } of Object.values(SHAPES)) {
+      for (const m of Object.values(MARGINS)) {
+        for (const size of [8, 30, 64, 88]) {
+          for (const rtl of [false, true]) {
+            const box = safeBox(w, h, m, motif);
+            const d = dotPlacement(w, h, box, m * w, size, rtl, motif);
+            const r = motifRect(motif.placement, w, h);
+            const pad = STROKE / 2;
+            const apart =
+              d.x + d.r <= r.x - pad || d.x - d.r >= r.x + r.width + pad || d.y + d.r <= r.y - pad;
+            assert.ok(apart, `${key} ${w}x${h} m${m} ${size} rtl=${rtl}`);
+            assert.ok(d.y - d.r >= box.y + box.height, `${key} dot below text`);
+          }
+        }
+      }
+    }
+  }
 });
