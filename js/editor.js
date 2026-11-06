@@ -1,4 +1,5 @@
 import { clearLetter } from './state.js';
+import { trapFocus } from './focus-trap.js';
 
 const CONFIRM_MS = 3000;
 const DANGER = '#ff453a';
@@ -18,6 +19,8 @@ export function initEditor({ update, getState, onClose = () => {} }) {
   let closing = false;
   let band = 'comfortable';
   let clearTimer = 0;
+  let releaseTrap = null;
+  let opener = null;
 
   title.dir = 'auto';
   text.dir = 'auto';
@@ -54,8 +57,12 @@ export function initEditor({ update, getState, onClose = () => {} }) {
     }
     if (isOpen) return;
     isOpen = true;
+    opener = document.activeElement;
     sync();
+    root.setAttribute('role', 'dialog');
+    root.setAttribute('aria-modal', 'true');
     root.classList.add('is-open');
+    releaseTrap = trapFocus(root);
     history.pushState({ editor: true }, '');
     placeBar();
     const field = focus === 'title' ? title : text;
@@ -69,8 +76,14 @@ export function initEditor({ update, getState, onClose = () => {} }) {
     isOpen = false;
     closing = false;
     root.classList.remove('is-open');
+    root.removeAttribute('role');
+    root.removeAttribute('aria-modal');
+    releaseTrap?.();
+    releaseTrap = null;
     resetClear();
     onClose();
+    if (opener?.isConnected) opener.focus({ preventScroll: true });
+    opener = null;
   }
 
   title.addEventListener('input', () => update((s) => ({ ...s, title: title.value })));
@@ -83,6 +96,12 @@ export function initEditor({ update, getState, onClose = () => {} }) {
   });
   addEventListener('popstate', () => {
     if (isOpen && !history.state?.editor) close();
+  });
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen && !closing) {
+      closing = true;
+      history.back();
+    }
   });
 
   clear.addEventListener('click', () => {

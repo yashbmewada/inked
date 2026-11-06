@@ -32,7 +32,7 @@
     --ground: #F3EEE3;
     --raised: #ECE6D9;
     --ink: #2A2622;
-    --muted: #7D7466;
+    --muted: #6A6154;
     --hairline: #D9D1C2;
     --tonal: #E8E1D3;
     --glass-base: rgba(243,238,227,.72);
@@ -184,7 +184,17 @@ button:disabled { cursor: default; }
   text-underline-offset: 4px;
 }
 
-.hint .link { min-height: 0; }
+.hint .link {
+  position: relative;
+  min-height: 0;
+}
+
+/* Gives the inline link a 44px tap target. */
+.hint .link::after {
+  content: "";
+  position: absolute;
+  inset: -12px -8px;
+}
 
 .panel {
   display: flex;
@@ -212,11 +222,17 @@ button:disabled { cursor: default; }
 .icon-btn { position: relative; }
 
 /* Extends the 36px controls to a 44px tap target. */
-.segmented button::after,
 .icon-btn::after {
   content: "";
   position: absolute;
-  inset: -5px 0;
+  inset: -4px;
+}
+
+/* The segment buttons sit 4px inside their 36px frame. */
+.segmented button::after {
+  content: "";
+  position: absolute;
+  inset: -8px 0;
 }
 
 .segmented button {
@@ -517,11 +533,11 @@ button:disabled { cursor: default; }
   color: var(--ink);
 }
 
-/* Extends the 20px remove control to a 36px tap target. */
+/* Extends the 20px remove control to a 44px tap target. */
 .thumb-remove::after {
   content: "";
   position: absolute;
-  inset: -8px;
+  inset: -12px;
 }
 
 .theme-line {
@@ -641,7 +657,15 @@ button:disabled { cursor: default; }
     padding: var(--s10);
   }
 
-  .masthead { display: none; }
+  /* Keeps the h1 for assistive tech; the editor shows the wordmark on desktop. */
+  .masthead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
 
   .stage {
     position: sticky;

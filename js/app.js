@@ -117,6 +117,14 @@ function ariaLabel({ title, text }) {
   return full.length > LABEL_LIMIT ? full.slice(0, LABEL_LIMIT - 3).trimEnd() + '...' : full;
 }
 
+// Clearing first makes a repeated message announce again.
+function announce(message) {
+  els.live.textContent = '';
+  setTimeout(() => {
+    els.live.textContent = message;
+  }, 50);
+}
+
 export function redraw() {
   if (!ready) return;
   clearTimeout(timer);
@@ -144,9 +152,9 @@ export function redraw() {
 
   const band = result.empty ? null : result.band;
   if (band && lastBand && band !== lastBand) {
-    els.live.textContent = `Text size: ${band}` + (hintAppeared ? '. Text is small. Try Story' : '');
+    announce(`Text size: ${band}` + (hintAppeared ? '. Text is small. Try Story' : ''));
   } else if (hintAppeared) {
-    els.live.textContent = 'Text is small. Try Story';
+    announce('Text is small. Try Story');
   }
   if (band) lastBand = band;
 

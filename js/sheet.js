@@ -1,6 +1,7 @@
 import { THEMES, getTheme, resolveStyle } from './themes.js';
 import { setTheme, saveMyTheme, removeMyTheme } from './state.js';
 import { renderImage } from './render.js';
+import { trapFocus } from './focus-trap.js';
 
 const THUMB_SCALE = 0.12;
 const THUMB_LETTER = { title: '', text: 'Dear Sam,' };
@@ -64,6 +65,7 @@ export function initSheet({ update, getState }) {
   let isOpen = false;
   let closing = false;
   let hideTimer = 0;
+  let releaseTrap = null;
   // Each open gets its own history entry id, so a stale entry left by a reload cannot keep the sheet open.
   let entryId = 0;
   let tab = null;
@@ -197,6 +199,7 @@ export function initSheet({ update, getState }) {
     clearTimeout(hideTimer);
     if (desktop.matches) {
       if (isOpen) requestClose();
+      setDialog(false);
       root.hidden = false;
       refresh();
     } else if (!isOpen) {
@@ -204,9 +207,24 @@ export function initSheet({ update, getState }) {
     }
   }
 
+  // On phones the open sheet is a modal dialog; inline on desktop it is a plain region.
+  function setDialog(on) {
+    if (on) {
+      root.setAttribute('role', 'dialog');
+      root.setAttribute('aria-modal', 'true');
+      releaseTrap ??= trapFocus(root);
+    } else {
+      root.removeAttribute('role');
+      root.removeAttribute('aria-modal');
+      releaseTrap?.();
+      releaseTrap = null;
+    }
+  }
+
   function open() {
     if (desktop.matches || isOpen) return;
     isOpen = true;
+    setDialog(true);
     closing = false;
     clearTimeout(hideTimer);
     tab = currentGroup(getState());
@@ -224,6 +242,7 @@ export function initSheet({ update, getState }) {
     if (!isOpen) return;
     isOpen = false;
     closing = false;
+    setDialog(false);
     root.classList.remove('is-open');
     backdrop.hidden = true;
     document.body.classList.remove('sheet-open');
@@ -249,6 +268,11 @@ export function initSheet({ update, getState }) {
     if (e.key === 'Escape' && isOpen) requestClose();
   });
   desktop.addEventListener('change', place);
+  // The strip thumbnails and the Dark/Light marking follow the device scheme while the variant is unset.
+  darkQuery.addEventListener('change', () => {
+    stripKey = '';
+    refresh();
+  });
 
   place();
   return { open, close, refresh };
