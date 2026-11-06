@@ -1,0 +1,101 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Inked. New baby</title>
+<style>body{margin:0;padding:24px 16px 48px;background:#0E0E0D;color:#EDEAE3;font-family:'Hanken Grotesk',-apple-system,Helvetica,sans-serif}
+h2{font-weight:400;margin:0 0 8px}h3{font-weight:400}.subtitle{color:#8A877F;max-width:900px;line-height:1.5;margin:0 0 20px}
+.cards,.options{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}.card-body h3{margin:10px 0 4px}.card-body p{color:#8A877F;font-size:13px;margin:0}
+nav{display:flex;gap:16px;margin-bottom:24px;font-size:14px}nav a{color:#EDEAE3}</style></head><body>
+<nav><a href="app-ui.html">App screens</a><a href="themes.html">Themes</a><a href="new-baby.html">New baby</a><a href="languages.html">Languages</a></nav>
+<h2>New baby: two new directions</h2><p class="subtitle">Both are gender-neutral, and both stay away from pink-or-blue. Each is shown in dark and light. Click the one you prefer.</p><style>
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500&family=EB+Garamond:ital@0;1&family=Kalam:wght@300&family=Courier+Prime&display=swap');
+.d{font-family:'Hanken Grotesk',sans-serif;color:#EDEAE3}
+.row{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;margin:18px 0 34px;align-items:flex-start}
+.cap{text-align:center;font-size:13px;color:#8A877F;margin-top:8px;max-width:260px}
+.wm{font-weight:300;font-size:56px;letter-spacing:-.01em;color:#EDEAE3;background:#0E0E0D;padding:30px 48px;border:1px solid #2A2927}
+.wm b{display:inline-block;width:.17em;height:.17em;border-radius:50%;background:#D0533A;margin-left:.04em}
+.icon{width:110px;height:110px;background:#0E0E0D;border:1px solid #2A2927;display:flex;align-items:center;justify-content:center}
+.icon b{width:30px;height:30px;border-radius:50%;background:#D0533A}
+.phone{width:260px;height:560px;border:2px solid #444;border-radius:32px;overflow:hidden;background:#0E0E0D;display:flex;flex-direction:column;position:relative}
+.ph-top{padding:16px 20px 8px;font-weight:300;font-size:22px}
+.ph-top b,.dw b{display:inline-block;width:5px;height:5px;border-radius:50%;background:#D0533A;margin-left:1px}
+.ph-body{padding:8px 20px;display:flex;flex-direction:column;gap:16px;flex:1}
+.pg{aspect-ratio:4/5;position:relative;line-height:1.55;box-sizing:border-box}
+.pg .m{position:absolute;width:13%}
+.m.tr{top:5%;right:6%} .m.tl{top:5%;left:6%} .m.br{bottom:5%;right:6%} .m.tc{top:4%;left:50%;transform:translateX(-50%)} .m.tb{top:5%;left:11%;width:78%} .m.bc{bottom:4%;left:50%;transform:translateX(-50%);width:16%} .m.brc{bottom:0;right:0;width:12%}
+.sig{position:absolute;bottom:6%;width:4px;height:4px;border-radius:50%}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{height:36px;box-sizing:border-box;padding:0 12px;border:1px solid #2A2927;border-radius:2px;display:flex;align-items:center;font-size:12px;color:#8A877F}
+.chip.on{border-color:#EDEAE3;color:#EDEAE3}
+.chip.on:before{content:"";width:6px;height:6px;border-radius:50%;background:#D0533A;margin-right:7px}
+.lbl{font-weight:500;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#8A877F}
+.prim{height:52px;background:#EDEAE3;color:#0E0E0D;display:flex;align-items:center;justify-content:center;font-size:15px;border-radius:2px}
+.sec{text-align:center;font-size:14px;text-decoration:underline;text-underline-offset:4px;padding:12px 0 4px}
+.foot{text-align:center;font-size:12px;color:#8A877F;padding-bottom:14px}
+.sheet{position:absolute;left:0;right:0;bottom:0;height:300px;background:#171716;border-top:1px solid #2A2927;padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.strip{display:flex;gap:8px;overflow:hidden}
+.strip .tc-wrap .tn,.strip .tc-wrap .tm,.phone .tn,.phone .tm,.desk .tn,.desk .tm{display:none}
+.mini{font-size:9px;color:#8A877F;text-align:center;margin-top:3px}
+.grid{display:flex;flex-wrap:wrap;gap:22px;justify-content:center}
+.tn{font-size:13px;margin-top:8px} .tm{font-size:11px;color:#8A877F}
+.desk{width:760px;max-width:100%;border:2px solid #444;border-radius:10px;overflow:hidden;background:#0E0E0D}
+.chrome{height:24px;background:#171716;border-bottom:1px solid #2A2927}
+.db{display:flex;gap:40px;padding:32px 40px 18px}
+.dw{font-weight:300;font-size:24px}
+.ta{border:1px solid #2A2927;border-radius:2px;padding:14px;font-weight:300;font-size:14px;line-height:1.6;min-height:120px}
+
+.chip{border-radius:18px !important}
+.prim{border-radius:14px !important}
+.ta{border-radius:12px !important}
+.sheet{border-radius:22px 22px 0 0 !important}
+.pg{border-radius:8px;overflow:hidden}
+.grid .pg{border-radius:6px}
+.wm{border-radius:20px}
+.icon{border-radius:26px}
+.desk{border-radius:14px}
+</style><style>
+:root{--glass:rgba(23,23,22,.72);--glass-hi:rgba(237,234,227,.16)}
+.glass{background:var(--glass) linear-gradient(180deg,rgba(237,234,227,.06),transparent 45%);-webkit-backdrop-filter:blur(16px) saturate(140%);backdrop-filter:blur(16px) saturate(140%);border:1px solid rgba(237,234,227,.10);box-shadow:inset 0 1px 0 var(--glass-hi),inset 0 -1px 0 rgba(0,0,0,.35)}
+.scroll{flex:1;overflow:hidden;padding:4px 20px 0;display:flex;flex-direction:column;gap:14px}
+.fbar{position:absolute;left:8px;right:8px;bottom:10px;border-radius:28px;padding:6px;display:flex;gap:6px}
+.fbar .s{flex:1;height:48px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.fbar .save{color:#EDEAE3;border:1px solid rgba(237,234,227,.18)}
+.fbar .share{background:#EDEAE3;color:#0E0E0D;flex:1.4}
+.ctl{display:flex;gap:8px;align-items:center}
+.seg{flex:1;display:flex;border:1px solid #2A2927;border-radius:20px;padding:3px;height:40px;box-sizing:border-box}
+.seg span{flex:1;display:flex;align-items:center;justify-content:center;font-size:12px;color:#8A877F;border-radius:16px}
+.seg span.on{background:#EDEAE3;color:#0E0E0D}
+.ib{width:40px;height:40px;border-radius:20px;border:1px solid #2A2927;display:flex;align-items:center;justify-content:center}
+.gsheet{position:absolute;left:8px;right:8px;bottom:10px;height:290px;border-radius:28px;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.gsheet .chip{background:#171716}
+.mut2{color:#C9C6BE;font-size:12px}
+.dim{filter:brightness(.55)}
+.selname{font-size:11px;color:#C9C6BE;margin-top:-4px}
+.strip .tc-wrap.sel .pg{outline:1.5px solid #EDEAE3;outline-offset:2px}
+.ph{font-size:13px;color:#8A877F}
+</style><style>
+.fin{--bg:#0E0E0D;--ink:#EDEAE3;--mut:#8A877F;--line:#2A2927;--tone:#22211F;--raised:#171716}
+.fin.lt{--bg:#F3EEE3;--ink:#2A2622;--mut:#7D7466;--line:#D9D1C2;--tone:#E8E1D3;--raised:#ECE6D9}
+.fin .phone{background:var(--bg);color:var(--ink)}
+.fin .ph-top{color:var(--ink);padding:24px 20px 8px}
+.fin .scroll{padding-top:12px}
+.fin .pg{border-radius:8px;border:1px solid var(--line)}
+.fin .ctl{gap:8px}
+.fin .seg{height:36px;border:1px solid var(--line);border-radius:12px;padding:3px}
+.fin .seg span{border-radius:9px;color:var(--mut)}
+.fin .seg span.on{background:var(--tone);color:var(--ink)}
+.fin .ib{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);color:var(--ink)}
+.fin .fbar{position:absolute;left:0;right:0;bottom:0;border-radius:0;background:var(--bg);border-top:1px solid var(--line);padding:10px 14px 16px;gap:8px;box-shadow:none}
+.fin .fbar .s{height:48px;border-radius:12px}
+.fin .fbar .save{border:1px solid var(--line);color:var(--ink);background:none}
+.fin .fbar .share{background:var(--ink);color:var(--bg)}
+.fin .gsheet{left:0;right:0;bottom:0;border-radius:22px 22px 0 0;height:300px}
+.fin.lt .glass{--glass:rgba(243,238,227,.72);border-color:rgba(42,38,34,.10);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.fin .chip{border-radius:12px;border-color:var(--line);color:var(--mut);background:none !important}
+.fin .chip.on{background:var(--tone) !important;color:var(--ink);border-color:var(--line)}
+.fin .mut2{color:var(--ink)}
+.fin .selname{color:var(--mut)}
+.fin .ta{border-color:var(--line);border-radius:12px;color:var(--ink)}
+.fin .desk{background:var(--bg)}
+.brandline{text-align:center;font-size:16px;font-weight:300;color:#EDEAE3;margin:4px 0 22px}
+.brandline b{display:inline-block;width:5px;height:5px;border-radius:50%;background:#D0533A}
+</style><style>.m.tcw{top:3%;left:50%;transform:translateX(-50%);width:28%}.m.brf{bottom:4%;right:6%;width:15%}
+.pairs{display:flex;flex-wrap:wrap;gap:30px 34px;justify-content:center}.pp2{display:flex;gap:8px}.pp2 .tn,.pp2 .tm{display:none}
+.pn{font-size:14px;margin-top:10px;color:#EDEAE3}.pm{font-size:12px;color:#8A877F;max-width:350px}.pg{border-radius:6px;overflow:hidden}.pair{cursor:pointer}</style><div class="d"><div class="pairs"><div class="pair" data-choice="New baby: mobile" onclick="toggleSelect(this)"><div class="pp2"><div class="tc-wrap" style="width:170px"><div class="pg" style="background:#1C1A1E;color:#F1ECE6;font-family:'Kalam';font-weight:300;font-size:7.4px;padding:22% 11% 12% 11%"><svg class="m tcw" viewBox="0 0 50 30"><path d="M8 4 Q25 1 42 4" stroke="#C7B4D6" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="25" y1="0.5" x2="25" y2="2.6" stroke="#C7B4D6" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="11" y1="4" x2="11" y2="15" stroke="#C7B4D6" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.5 17 A4 4 0 1 1 13.5 23 A3 3 0 1 0 13.5 17 Z" stroke="#C7B4D6" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="25" y1="2.8" x2="25" y2="19" stroke="#C7B4D6" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M25 19.5 l1.3 2.7 3 .4 -2.2 2.1 .5 3 -2.6 -1.4 -2.6 1.4 .5 -3 -2.2 -2.1 3 -.4 Z" stroke="#C7B4D6" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="39" y1="4" x2="39" y2="12" stroke="#C7B4D6" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 17 Q33 17 33 15 Q33 13 35.2 13.3 Q36 11.5 38.5 11.5 Q41.5 11.5 42 13.5 Q45 13.5 45 15.5 Q45 17 43 17 Z" stroke="#C7B4D6" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Dear Sam,<br><br>The kettle still whistles the same off-key note it did the morning you left. I keep meaning to replace it, but every time it sings I think of you laughing at it from the doorway.</div><span class="sig" style="background:#C7B4D6;left:11%"></span></div><div class="tn">New baby: mobile</div><div class="tm">Hand · Plain</div></div><div class="tc-wrap" style="width:170px"><div class="pg" style="background:#FBF6EE;color:#35302C;font-family:'Kalam';font-weight:300;font-size:7.4px;padding:22% 11% 12% 11%"><svg class="m tcw" viewBox="0 0 50 30"><path d="M8 4 Q25 1 42 4" stroke="#B79CC9" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="25" y1="0.5" x2="25" y2="2.6" stroke="#B79CC9" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="11" y1="4" x2="11" y2="15" stroke="#B79CC9" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.5 17 A4 4 0 1 1 13.5 23 A3 3 0 1 0 13.5 17 Z" stroke="#B79CC9" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="25" y1="2.8" x2="25" y2="19" stroke="#B79CC9" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M25 19.5 l1.3 2.7 3 .4 -2.2 2.1 .5 3 -2.6 -1.4 -2.6 1.4 .5 -3 -2.2 -2.1 3 -.4 Z" stroke="#B79CC9" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="39" y1="4" x2="39" y2="12" stroke="#B79CC9" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 17 Q33 17 33 15 Q33 13 35.2 13.3 Q36 11.5 38.5 11.5 Q41.5 11.5 42 13.5 Q45 13.5 45 15.5 Q45 17 43 17 Z" stroke="#B79CC9" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Dear Sam,<br><br>The kettle still whistles the same off-key note it did the morning you left. I keep meaning to replace it, but every time it sings I think of you laughing at it from the doorway.</div><span class="sig" style="background:#B79CC9;left:11%"></span></div><div class="tn">New baby: mobile</div><div class="tm">Hand · Plain</div></div></div><div class="pn">New baby: mobile</div><div class="pm">A hanging crib mobile (moon, star and cloud) at the top centre, in soft lavender. Hand font, plain paper.</div></div><div class="pair" data-choice="New baby: footprints" onclick="toggleSelect(this)"><div class="pp2"><div class="tc-wrap" style="width:170px"><div class="pg" style="background:#1E1A18 radial-gradient(rgba(127,127,127,.12) 1px,transparent 1px);background-size:3px 3px;color:#F3ECE4;font-family:'EB Garamond';font-size:7px;padding:12% 11% 12% 11%"><svg class="m brf" viewBox="0 0 34 30"><g transform="translate(9 14) rotate(-12)"><path d="M0 0 C-3 0 -3.6 5 -2.6 8.5 C-1.8 11 1.8 11 2.4 8.5 C3.2 5 3 0 0 0 Z" fill="#E0A98A"/><circle cx="-2.3" cy="-1.6" r="0.9" fill="#E0A98A"/><circle cx="-0.6" cy="-2.6" r="0.8" fill="#E0A98A"/><circle cx="1" cy="-2.5" r="0.7" fill="#E0A98A"/><circle cx="2.3" cy="-1.7" r="0.6" fill="#E0A98A"/><circle cx="3.1" cy="-0.5" r="0.5" fill="#E0A98A"/></g><g transform="translate(24 8) rotate(8)"><path d="M0 0 C-3 0 -3.6 5 -2.6 8.5 C-1.8 11 1.8 11 2.4 8.5 C3.2 5 3 0 0 0 Z" fill="#E0A98A"/><circle cx="-2.3" cy="-1.6" r="0.9" fill="#E0A98A"/><circle cx="-0.6" cy="-2.6" r="0.8" fill="#E0A98A"/><circle cx="1" cy="-2.5" r="0.7" fill="#E0A98A"/><circle cx="2.3" cy="-1.7" r="0.6" fill="#E0A98A"/><circle cx="3.1" cy="-0.5" r="0.5" fill="#E0A98A"/></g></svg><div>Dear Sam,<br><br>The kettle still whistles the same off-key note it did the morning you left. I keep meaning to replace it, but every time it sings I think of you laughing at it from the doorway.</div><span class="sig" style="background:#E0A98A;left:11%"></span></div><div class="tn">New baby: footprints</div><div class="tm">Classic · Grain</div></div><div class="tc-wrap" style="width:170px"><div class="pg" style="background:#FBF3EA radial-gradient(rgba(127,127,127,.12) 1px,transparent 1px);background-size:3px 3px;color:#3A302A;font-family:'EB Garamond';font-size:7px;padding:12% 11% 12% 11%"><svg class="m brf" viewBox="0 0 34 30"><g transform="translate(9 14) rotate(-12)"><path d="M0 0 C-3 0 -3.6 5 -2.6 8.5 C-1.8 11 1.8 11 2.4 8.5 C3.2 5 3 0 0 0 Z" fill="#D99A78"/><circle cx="-2.3" cy="-1.6" r="0.9" fill="#D99A78"/><circle cx="-0.6" cy="-2.6" r="0.8" fill="#D99A78"/><circle cx="1" cy="-2.5" r="0.7" fill="#D99A78"/><circle cx="2.3" cy="-1.7" r="0.6" fill="#D99A78"/><circle cx="3.1" cy="-0.5" r="0.5" fill="#D99A78"/></g><g transform="translate(24 8) rotate(8)"><path d="M0 0 C-3 0 -3.6 5 -2.6 8.5 C-1.8 11 1.8 11 2.4 8.5 C3.2 5 3 0 0 0 Z" fill="#D99A78"/><circle cx="-2.3" cy="-1.6" r="0.9" fill="#D99A78"/><circle cx="-0.6" cy="-2.6" r="0.8" fill="#D99A78"/><circle cx="1" cy="-2.5" r="0.7" fill="#D99A78"/><circle cx="2.3" cy="-1.7" r="0.6" fill="#D99A78"/><circle cx="3.1" cy="-0.5" r="0.5" fill="#D99A78"/></g></svg><div>Dear Sam,<br><br>The kettle still whistles the same off-key note it did the morning you left. I keep meaning to replace it, but every time it sings I think of you laughing at it from the doorway.</div><span class="sig" style="background:#D99A78;left:11%"></span></div><div class="tn">New baby: footprints</div><div class="tm">Classic · Grain</div></div></div><div class="pn">New baby: footprints</div><div class="pm">Two tiny footprints in the bottom-right corner, in warm peach. Classic font, grain paper.</div></div><div class="pair" data-choice="New baby: current" onclick="toggleSelect(this)"><div class="pp2"><div class="tc-wrap" style="width:170px"><div class="pg" style="background:#1D1A1A repeating-linear-gradient(#1D1A1A 0 11px,rgba(127,127,127,.25) 11px 12px);color:#EFE7E2;font-family:'Kalam';font-weight:300;font-size:7.4px;padding:22% 11% 12% 11%"><svg class="m tr" viewBox="0 0 30 30"><path d="M18 5 A10 10 0 1 0 25 20 A8 8 0 1 1 18 5 Z" stroke="#B8958C" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M24 6 L25 9 L28 9 L25.5 11 L26.5 14 L24 12 L21.5 14 L22.5 11 L20 9 L23 9 Z" stroke="#B8958C" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg><div>Dear Sam,<br><br>The kettle still whistles the same off-key note it did the morning you left. I keep meaning to replace it, but every time it sings I think of you laughing at it from the doorway.</div><span class="sig" style="background:#B8958C;left:11%"></span></div><div class="tn">New baby: current</div><div class="tm">Hand · Lined</div></div><div class="tc-wrap" style="width:170px"><div class="pg" style="background:#F4EEE8 repeating-linear-gradient(#F4EEE8 0 11px,rgba(127,127,127,.25) 11px 12px);color:#33302D;font-family:'Kalam';font-weight:300;font-size:7.4px;padding:22% 11% 12% 11%"><svg class="m tr" viewBox="0 0 30 30"><path d="M18 5 A10 10 0 1 0 25 20 A8 8 0 1 1 18 5 Z" stroke="#B8958C" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M24 6 L25 9 L28 9 L25.5 11 L26.5 14 L24 12 L21.5 14 L22.5 11 L20 9 L23 9 Z" stroke="#B8958C" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg><div>Dear Sam,<br><br>The kettle still whistles the same off-key note it did the morning you left. I keep meaning to replace it, but every time it sings I think of you laughing at it from the doorway.</div><span class="sig" style="background:#B8958C;left:11%"></span></div><div class="tn">New baby: current</div><div class="tm">Hand · Lined</div></div></div><div class="pn">New baby: current</div><div class="pm">For comparison: the moon and star on lined paper.</div></div></div></div></body></html>
