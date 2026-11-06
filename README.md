@@ -28,7 +28,9 @@ Needs Node 20 or later. There are no dependencies to install.
 
 ## Add a theme
 
-Add one entry to `THEMES` in `js/themes.js`. If the theme has a motif, add one entry to `MOTIFS` in `js/motifs.js` under the same key as the theme's `motif` field.
+Add an entry to `THEMES` in `js/themes.js` with `id`, `name`, `group`, `font` (a key of `FONTS`), `texture`, `motif`, and `dark` and `light` colour sets, each made with `v(ground, ink, tint)`. Set `light` to `null` for a theme with a single look, and `motif` to `null` for no motif.
+
+A new motif also needs two entries in `js/motifs.js`, both under the theme's `motif` key: a drawing function in `PAINT` and a position in `PLACEMENT`. `MOTIFS` is built from `PLACEMENT`, so it needs no edit. Update the theme id list in `tests/themes.test.js`.
 
 ## Fonts
 
