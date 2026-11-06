@@ -50,3 +50,15 @@ test('presets', () => {
   assert.equal(SIZE_CAPS.large, 88);
   assert.equal(MARGINS.normal, 0.11);
 });
+
+test('cap off the 0.5 grid terminates and is respected', () => {
+  assert.equal(run({ text: 'Hi.', cap: 54.4 }).size, 54.4);
+  const r = run({ text: 'word '.repeat(600), cap: 54.4 });
+  assert.ok(r.size <= 54.4);
+});
+
+test('a title wider than the box shrinks the size', () => {
+  const text = 'Short body.';
+  const title = 'x'.repeat(40);
+  assert.ok(run({ text, title }).size < run({ text }).size);
+});

@@ -72,7 +72,7 @@ export function sizeBand(size) {
   return 'tiny';
 }
 
-export function fitText({ title, text, box, cap, measureAt, measureTitleAt }) {
+export function fitText({ title = '', text, box, cap, measureAt, measureTitleAt }) {
   const paragraphs = splitParagraphs(text);
   const hasTitle = title.trim() !== '';
   const titleMeasureAt = measureTitleAt ?? measureAt;
@@ -93,16 +93,21 @@ export function fitText({ title, text, box, cap, measureAt, measureTitleAt }) {
     return { size, titleSize, blocks, height, fits: titleFits && height <= box.height };
   };
 
-  let lo = MIN_SIZE;
-  let hi = Math.max(cap, MIN_SIZE);
-  if (layout(hi).fits) lo = hi;
-  else {
-    while (hi - lo > STEP) {
-      const mid = lo + Math.floor((hi - lo) / STEP / 2) * STEP;
-      if (layout(mid).fits) lo = mid;
-      else hi = mid;
+  const top = Math.max(cap, MIN_SIZE);
+  let chosen = top;
+  if (!layout(top).fits) {
+    let lo = 0;
+    let hi = Math.ceil((top - MIN_SIZE) / STEP) - 1;
+    let best = 0;
+    while (lo <= hi) {
+      const mid = Math.floor((lo + hi) / 2);
+      if (layout(MIN_SIZE + mid * STEP).fits) {
+        best = mid;
+        lo = mid + 1;
+      } else hi = mid - 1;
     }
+    chosen = MIN_SIZE + best * STEP;
   }
-  const { fits, ...result } = layout(lo);
+  const { fits, ...result } = layout(chosen);
   return result;
 }
